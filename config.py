@@ -1,4 +1,4 @@
 DEBUG = False
 SQLALCHEMY_ECHO = False
 SQLALCHEMY_TRACK_MODIFICATIONS = False
-SQLALCHEMY_DATABASE_URI = "postgresql://localhost/fresh"
+SQLALCHEMY_DATABASE_URI = "postgresql://127.0.0.1:5432/fresh"
