@@ -20,7 +20,7 @@ bootstrap = Bootstrap(app)
 
 # Set database elements, start the tables
 db = SQLAlchemy(app)
-from database import init_db
+from fresh.database import init_db
 init_db()
 
 # Navbar (sidebar)
