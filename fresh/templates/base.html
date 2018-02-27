@@ -1,0 +1,16 @@
+{% extends "bootstrap/base.html" %}
+
+{% block title %} Minty Fresh Smart Greenhouse {% endblock %}
+
+{% import "bootstrap/fixes.html" as fixes %}
+
+{% block html_attribs %} lang="en" {% endblock %}
+
+{% block head %}
+    {{super()}}
+    {{fixes.ie8()}}
+{%- endblock %}
+
+{% block navbar %}
+    {{nav.left.render(id="sidebar-wrapper")}}
+{% endblock %}
