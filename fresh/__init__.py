@@ -8,9 +8,9 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_heroku import Heroku
 
 # Initiate the Flask app with config
-app = Flask(__name__, instance_relative_config=False)
+app = Flask(__name__, instance_relative_config=True)  # Bunu False yap
 app.config.from_object('config')
-# app.config.from_pyfile('config.py')
+app.config.from_pyfile('config.py')  # Bunu comment out et
 
 # For Heroku
 heroku = Heroku(app)
@@ -21,15 +21,17 @@ bootstrap = Bootstrap(app)
 # Set database elements, start the tables
 db = SQLAlchemy(app)
 
-# Navbar (sidebar)
+# Navbar (topbar)
 nav = Nav()
-sidebar = Navbar(
+topbar = Navbar(
     'Minty Fresh',
-    View('Home', 'mainpage'),
-    View('Monitor', 'showData'),
+    View('Current', 'current'),
+    View('History', 'history'),
+    View('Signal Data', 'showSignal'),
+    View('Color Data', 'showColor'),
 )
 
-nav.register_element('left', sidebar)
+nav.register_element('top', topbar)
 nav.init_app(app)
 
 # For debugging

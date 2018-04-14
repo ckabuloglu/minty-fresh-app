@@ -1,0 +1,53 @@
+{%- extends "base.html" %}
+
+{% block title %} Monitor Stats {% endblock %}
+
+{% block content %}
+
+<div class="container">
+  <div class="row" >
+      <form method="POST" action="{{ url_for('showSignal') }}" >
+          <div class="form-group input-group">
+            Choose a device: {{ form.device_id(class_="form-control")}} </br>       
+          </div>
+          <div class="form-group">
+            <input id="choose_button" type="submit" class="btn" value="Choose">
+          </div>
+          {{ form.csrf_token }}
+      </form>   
+  </div>
+
+  <div id="data-table" class="row">
+      <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Signal ID</th>
+              <th>Device ID</th>
+              <th>Temperature</th>
+              <th>Humidity</th>
+              <th>pH Level</th>
+              <th>Light Composition</th>
+              <th>Battery Level</th>
+              <th>Time</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for row in query_results %}
+              <tr>
+                <td> {{ row.signal_id }}</td>
+                <td> {{ row.device_id }}</td>
+                <td> {{ row.temperature }}</td>
+                <td> {{ row.humidity }}</td>
+                <td> {{ row.pH }}</td>
+                <td> {{ row.light_composition}}</td>
+                <td> {{ row.battery_level }}</td>
+                <td> {{ row.datetime }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+  </div>
+
+</div>
+
+{%- endblock %}

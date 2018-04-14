@@ -15,4 +15,6 @@ def init_db():
     # they will be registered properly on the metadata
 
     import fresh.models
+    db_session.close_all() # <- don't forget to close
+    Base.metadata.drop_all(engine)
     Base.metadata.create_all(bind=engine)

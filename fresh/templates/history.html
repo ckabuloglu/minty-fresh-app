@@ -1,0 +1,23 @@
+{%- extends "base.html" %}
+
+{% block title %} History {% endblock %}
+
+{% block content %}
+
+<div class="container">
+  <div class="row" >
+      
+      <form method="POST" action="{{ url_for('history') }}" >
+        <div class="form-group input-group">
+          Choose a type of statistics that you want to track: {{ form.stat_type(class_="form-control")}} </br>       
+        </div>
+        <div class="form-group">
+          <input id="choose_button" type="submit" class="btn" value="Choose">
+        </div>
+        {{ form.csrf_token }}
+      </form>
+      <h2> {{ stat }} </h2>
+  </div>
+</div>
+
+{%- endblock %}

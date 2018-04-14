@@ -1,0 +1,43 @@
+body {
+    /* background: rgb(154, 214, 139); */
+    
+    /* color: white; */
+}
+  
+div.well {
+  height: 250px;
+} 
+  
+.Absolute-Center {
+  margin: auto;
+  position: absolute;
+  top: 0; left: 0; bottom: 0; right: 0;
+}
+
+.Absolute-Center.is-Responsive {
+  width: 50%; 
+  height: 75%;
+  min-width: 200px;
+  max-width: 400px;
+  padding: 40px;
+}
+
+#logo_container{
+  vertical-align: middle;
+  clear:both;
+  padding-left: 40px;
+}
+
+#login_button {
+  color:rgb(73, 73, 73);
+}
+
+#login_title {
+  color:rgb(73, 73, 73);
+}
+
+nav.navbar {
+  background-color:rgb(34, 33, 33);
+  border: 0px;
+  border-radius: 0px;
+}

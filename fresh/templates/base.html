@@ -9,8 +9,10 @@
 {% block head %}
     {{super()}}
     {{fixes.ie8()}}
+    <link rel="stylesheet"
+      href="{{url_for('static', filename='style/style.css')}}">
 {%- endblock %}
 
 {% block navbar %}
-    {{nav.left.render(id="sidebar-wrapper")}}
+    {{nav.top.render(id="topbar")}}
 {% endblock %}

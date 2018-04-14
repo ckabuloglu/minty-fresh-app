@@ -1,6 +1,5 @@
 from . import db
 
-def insert(sensordata):
-    db.session.add(sensordata)
+def insert(row):
+    db.session.add(row)
     db.session.commit()
-

@@ -1,0 +1,45 @@
+{% extends "bootstrap/base.html" %}
+
+{% block styles %}
+{{super()}}
+<link rel="stylesheet"
+      href="{{url_for('static', filename='style/style.css')}}">
+{% endblock %}
+
+{% block title %} Login Page {% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="row">
+    <div class="Absolute-Center is-Responsive">
+      <div class="col-sm-12 col-md-10 col-md-offset-1">
+        <div class="row" id="logo_container"> 
+          <img class="img-responsive" src="../static/img/logo.png" alt="Minty Fresh Logo">
+        </div>
+        <div class="row"> 
+          <form action="{{ url_for('index') }}" method="POST" id="loginForm">
+              <div id="login_title" class="form-group text-center">
+                <h4>Minty Fresh - Remote Control App</h4>
+              </div>
+              <div class="form-group input-group">
+                <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+                {{ form.email(class_="form-control", type="email", placeholder="email")}}        
+              </div>
+              <div class="form-group input-group">
+                <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+                {{ form.password(class_="form-control", type="password", placeholder="password")}}
+              </div>
+              <div class="form-group">
+                <input id="login_button" type="submit" class="btn btn-def btn-block" value="Login">
+              </div>
+              {{ form.csrf_token }}
+            </form>   
+        </div>
+        <div class="form-group text-center">
+          <a href="{{ url_for('forgot') }}" style='color:rgb(73, 73, 73)'>Forgot Password</a>
+        </div>
+      </div>  
+    </div>    
+  </div>
+</div>
+{% endblock %}
