@@ -8,9 +8,9 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_heroku import Heroku
 
 # Initiate the Flask app with config
-app = Flask(__name__, instance_relative_config=True)  # Bunu False yap
+app = Flask(__name__, instance_relative_config=False)  # Heroku icin bunu False yap
 app.config.from_object('config')
-app.config.from_pyfile('config.py')  # Bunu comment out et
+# app.config.from_pyfile('config.py')  # Heroku icin bunu comment out et
 
 # For Heroku
 heroku = Heroku(app)
