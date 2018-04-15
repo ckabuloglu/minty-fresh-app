@@ -1,4 +1,4 @@
-from sqlalchemy import Column, DateTime, Float, Integer, String
+from sqlalchemy import Boolean, Column, DateTime, Float, Integer, String
 from sqlalchemy.sql import func
 
 from fresh.database import Base
@@ -9,7 +9,7 @@ class SensorData(Base):
     device_id = Column(Integer, nullable=False)
     temperature = Column(Float, default=None)
     humidity = Column(Float, default=None)
-    light_composition = Column(Integer, default=None)
+    light_composition = Column(String, default=None)
     pH = Column(Float, default=None)
     battery_level = Column(Integer, default=None)
     datetime = Column(DateTime(timezone=True), nullable=False, default=func.now())
@@ -25,6 +25,7 @@ class ColorData(Base):
     green = Column(Integer, default=0, nullable=False)
     blue = Column(Integer, default=0, nullable=False)
     color_hex = Column(String, default="0x000000", nullable=False)
+    by_user = Column(Boolean, default=False, nullable=False)
     datetime = Column(DateTime(timezone=True), nullable=False, default=func.now())
 
     def __repr__(self):

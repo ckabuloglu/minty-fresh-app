@@ -27,6 +27,7 @@
               <th>Green</th>
               <th>Blue</th>
               <th>Color in Hex</th>
+              <th>Edited by user</th>
               <th>Time</th>
             </tr>
           </thead>
@@ -38,7 +39,8 @@
                 <td> {{ row.red }}</td>
                 <td> {{ row.green }}</td>
                 <td> {{ row.blue }}</td>
-                <td> {{ row.color_hex}}</td>
+                <td> {{ row.color_hex }}</td>
+                <td> {{ row.by_user }}</td>
                 <td> {{ row.datetime }}</td>
               </tr>
             {% endfor %}
