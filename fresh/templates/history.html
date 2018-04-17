@@ -2,21 +2,32 @@
 
 {% block title %} History {% endblock %}
 
+{% block scripts %}
+<script type="text/javascript" src="http://kozea.github.com/pygal.js/javascripts/svg.jquery.js"></script>
+<script type="text/javascript" src="http://kozea.github.com/pygal.js/javascripts/pygal-tooltips.js"></script>
+{%- endblock %}
+
 {% block content %}
 
 <div class="container">
-  <div class="row" >
-      
-      <form method="POST" action="{{ url_for('history') }}" >
-        <div class="form-group input-group">
-          Choose a type of statistics that you want to track: {{ form.stat_type(class_="form-control")}} </br>       
-        </div>
-        <div class="form-group">
-          <input id="choose_button" type="submit" class="btn" value="Choose">
-        </div>
-        {{ form.csrf_token }}
-      </form>
-      <h2> {{ stat }} </h2>
+  <form method="POST" action="{{ url_for('history') }}" >
+    <div class="row" >
+      <div class="col-md-6">
+          Choose a device: {{ form.device_id(class_="form-control")}}
+      </div>
+      <div class="col-md-6">
+          Choose a type of statistics: {{ form.stat_type(class_="form-control")}}
+      </div>
+    </div><br>
+    <div class="row">
+        <input id="choose_button" type="submit" class="btn" value="Choose">
+    </div>
+    {{ form.csrf_token }}
+  </form>
+
+  <br><br>
+  <div class="row">
+    {{ chart.render() | safe }}
   </div>
 </div>
 

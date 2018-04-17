@@ -2,6 +2,31 @@
 
 {% block title %} Monitor Stats {% endblock %}
 
+{% block scripts %}
+
+<script>
+    function redUpdate(color) {
+        document.querySelector('#selected-red').value = parseInt(color);
+    }
+    function greenUpdate(color) {
+        document.querySelector('#selected-green').value = parseInt(color);
+    }
+    function blueUpdate(color) {
+        document.querySelector('#selected-blue').value = parseInt(color);
+    }
+    function combineColor() {
+        redStr = document.getElementById('selected-red').value.toString();
+        greenStr = document.getElementById('selected-green').value.toString();
+        blueStr = document.getElementById('selected-blue').value.toString();
+        finalColor = 'rgb(' + redStr + ', ' + greenStr + ', ' + blueStr + ')';
+        console.log(finalColor);
+        document.querySelector('#selected-hex').value = finalColor;
+        document.querySelector('#selected-color').style.backgroundColor = finalColor;
+    }
+</script>
+
+{%- endblock %}
+
 {% block content %}
 
 <div class="container">
@@ -10,13 +35,102 @@
         <h4> Here, you can check the latest status and conditions of your greenhouse unit, browse through various
             statistics to observe past conditions of the unit or change the color of the LED panel.
         </h4>
-    </div>
+    </div> </br> </br>
     <div class="row">
         <div class="col-md-6">
-            <h4> Current Status </h4>
+            <div class="row">
+                <h3> Current Status </h3>
+            </div>
+            
+            <div class="row" >
+                <form name="stat" method="POST" action="{{ url_for('current') }}" >
+                    <div class="form-group input-group">
+                      Choose a device: {{ form.device_id(class_="form-control")}} </br>       
+                    </div>
+                    <div class="form-group">
+                      <input id="choose_button" type="submit" class="btn" value="Choose">
+                    </div>
+                    {{ form.csrf_token }}
+                </form>   
+            </div>
+
+            <div class="row">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <td> <strong>Device ID:</strong> </td>
+                            <td> {{ row.device_id }} </td>
+                        </tr>
+                    </thead>
+                    <tr>
+                        <td> <strong>Temperature:</strong> </td>
+                        <td> {{ row.temperature }} </td>
+                    </tr>
+                    <tr>
+                        <td> <strong>Humidity:</strong> </td>
+                        <td> {{ row.humidity }} </td>
+                    </tr>
+                    <tr>
+                        <td> <strong>pH:</strong> </td>
+                        <td> {{ row.pH }} </td>
+                    </tr>
+                    <tr>
+                        <td> <strong>Light Color:</strong> </td>
+                        <td> {{ "0x" + color_form.color_hex.default[1:] }} </td>
+                    </tr>
+                    <tr>
+                        <td> <strong>Battery Level:</strong> </td>
+                        <td> {{ row.battery_level }} </td>
+                    </tr>
+                    <tr>
+                        <td> <strong>Last Updated:</strong> </td>
+                        <td> {{ row.datetime }} </td>
+                    </tr>
+                </table>
+
+            </div>
+
         </div>
         <div class="col-md-6">
-            <h4> Change Color </h4>
+            <div class="row">
+                <h3> Change Color </h3>
+            </div>
+            <div class="row">
+                <div class="col-md-1">
+
+                </div>
+                <div class="col-md-10" id="color_selector">
+                    <form name="color" method="POST" action="{{ url_for('current') }}" oninput="combineColor()" onload="combineColor()">
+                            {{ color_form.red.label }}:
+                            {{ color_form.red(min=0, max=255, value=color_form.red.default, onload="redUpdate(value)", oninput="redUpdate(value)") }}
+                            <output for="red" id="selected-red"> {{ color_form.red.default }} </output><br>
+
+                            {{ color_form.green.label }}:
+                            {{ color_form.green(min=0, max=255, value=color_form.green.default, oninput="greenUpdate(value)") }}
+                            <output for="green" id="selected-green"> {{ color_form.green.default }} </output><br>
+
+                            {{ color_form.blue.label }}:
+                            {{ color_form.blue(min=0, max=255, value=color_form.blue.default, oninput="blueUpdate(value)") }}
+                            <output for="blue" id="selected-blue"> {{ color_form.blue.default }} </output><br><br>
+
+                            {{ color_form.device(value=row.device_id)}}
+
+                            <div class="form-group">
+                                <input id="choose_button" type="submit" class="btn" value="Change Color">
+                            </div>
+                    </form> <br><br>
+
+                    <div class="row" id="selected-color" style="background-color: {{ color_form.color_hex.default }};">
+                        <output for="hex" id="selected-hex"> </output>
+                    </div><br>
+ 
+                </div>
+                <div class="col-md-1">
+
+                </div>
+
+            </div>
+            
         </div>
     </div>
 </div>

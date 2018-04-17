@@ -12,4 +12,4 @@ def getDeviceIds(rows):
             ids.append((row.device_id, str(row.device_id)))
             idSet.add(row.device_id)
 
-    return ids
+    return sorted(ids)

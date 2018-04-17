@@ -1,8 +1,7 @@
-body {
-    /* background: rgb(154, 214, 139); */
-    
-    /* color: white; */
-}
+/* body {
+    background: rgb(154, 214, 139);
+    color: white;
+} */
   
 div.well {
   height: 250px;
@@ -40,4 +39,20 @@ nav.navbar {
   background-color:rgb(34, 33, 33);
   border: 0px;
   border-radius: 0px;
+}
+
+#color_selector {
+  text-align: center;
+  vertical-align: middle;
+}
+
+#selected-color {
+  height: 70px;
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%); 
+  border-color: black;
+  border-radius: 10px;
+  border-width: 5px;
+  color: white;
 }

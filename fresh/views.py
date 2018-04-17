@@ -1,10 +1,16 @@
+import random
+from datetime import datetime, timedelta
+
 from flask import jsonify, render_template, redirect, request, url_for
+
+import pygal
+
+from sqlalchemy.orm import load_only
 
 from . import app, db
 from .models import ColorData, SensorData
 from .helpers import insert, getDeviceIds
-
-from forms.data_forms import ChooseDeviceForm, ChooseStatForm
+from forms.data_forms import ChooseDeviceForm, ChooseColorForm, ChooseStatForm
 from forms.login_forms import ForgotForm, LoginForm
 
 # Main login page
@@ -28,21 +34,65 @@ def forgot():
 
 # Main dashboard page, shows the latest conditions as well as allowing
 # the change the light composition and color of the LED panel
-@app.route('/current', methods=["GET"])
+@app.route('/current', methods=["GET", "POST"])
 def current():
-    return render_template('current.html')
+    device_form = ChooseDeviceForm(request.form)
+    device_form.device_id.choices = getDeviceIds(SensorData.query.all())
+    color_form = ChooseColorForm()
+
+    #  If a device is chosen from the list
+    if request.method == 'POST' and "device_id" in request.form:
+        device = device_form.data['device_id']
+    elif request.method == 'POST' and "red" in request.form:
+        device = color_form.data['device']
+        red = color_form.data['red']
+        green = color_form.data['green']
+        blue = color_form.data['blue']
+
+        color_hex = "0x"
+        for color in [red, green, blue]:
+            st = str(hex(int(color))[2:]).upper()
+            if len(st) < 2:
+                st = '0' + st
+            color_hex = color_hex + st
+
+        try:
+            cData = ColorData(device_id=device, red=red, green=green, blue=blue, color_hex=color_hex, by_user=True)
+            insert(cData)
+            print "DB Insert Succesful"
+        except:
+            return "Cannot put into DB\n", 403
+
+    # If no data or whatsoever is present, initiate by adding 1 row to each table with dummy variable
+    elif len(SensorData.query.all()) == 0:
+        sData = SensorData(device_id=1, temperature=78, humidity=50, pH=7, light_composition="0xFF00FF", battery_level=100)
+        cData = ColorData(device_id=1, red=255, green=0, blue=255, color_hex="0xFF00FF", by_user=True)
+        insert(sData)
+        insert(cData)
+        device = 1
+    else:
+        device = 1      # Default device id is 1
+        
+    sensor_row = SensorData.query.filter_by(device_id=device).order_by(SensorData.datetime.desc()).first()
+
+    color_row = ColorData.query.filter_by(device_id=device).order_by(ColorData.datetime.desc()).first()
+    color_form.red.default = color_row.red
+    color_form.green.default = color_row.green
+    color_form.blue.default = color_row.blue
+    color_form.color_hex.default = '#' + color_row.color_hex[2:]
+
+    return render_template('current.html', row=sensor_row, form=device_form, color_form=color_form)
 
 # Shows database rows of the signal table
-@app.route('/showSignal', methods=["GET", "POST"])
-def showSignal():
+@app.route('/showSensor', methods=["GET", "POST"])
+def showSensor():
     form = ChooseDeviceForm(request.form)
     form.device_id.choices = getDeviceIds(SensorData.query.all())
     if request.method == 'POST':
         signals = SensorData.query.filter_by(device_id=form.data['device_id']).all()
-        return render_template('signal_data.html', query_results=signals, form=form)
     else:
         signals = SensorData.query.all()
-        return render_template('signal_data.html', query_results=signals, form=form)
+    return render_template('sensor_data.html', query_results=signals, form=form)
 
 # Shows the database rows of the color table
 @app.route('/showColor', methods=["GET", "POST"])
@@ -51,21 +101,45 @@ def showColor():
     form.device_id.choices = getDeviceIds(ColorData.query.all())
     if request.method == 'POST':
         colors = ColorData.query.filter_by(device_id=form.data['device_id']).all()
-        return render_template('color_data.html', query_results=colors, form=form)
     else:
         colors = ColorData.query.all()
-        return render_template('color_data.html', query_results=colors, form=form)
+    return render_template('color_data.html', query_results=colors, form=form)
 
 # Shows the graphs (Work in Progress) of past data
 @app.route('/history', methods=["GET", "POST"])
 def history():
     form = ChooseStatForm(request.form, coerce=int)
+    form.device_id.choices = getDeviceIds(SensorData.query.all())
+
     if request.method == 'POST':
         stat = form.data['stat_type']
-        return render_template('history.html', stat=stat, form=form)
+        device = form.data['device_id']
     else:
-        stat = "Unchosen"
-        return render_template('history.html', stat=stat, form=form)
+        stat = "temperature"           # Default is Temperature
+        device = 1
+
+    stat_data = SensorData.query.filter_by(device_id=device).options(load_only(stat))
+    
+    rows = []
+    for row in stat_data:
+        rows.append((row.datetime, getattr(row, stat)))
+
+    statRanges = {'temperature':(32, 100), 
+                  'humidity':(0, 100), 
+                  'pH':(0, 14), 
+                  'battery_level':(0, 105), }
+
+    # Create the chart
+    title = '%s for device %s' % (stat, device)
+    chart = pygal.Line(width=1000, height=500,
+                          explicit_size=True, title=title,
+                          range=statRanges[stat],
+                          show_dots=False,
+                          disable_xml_declaration=True)
+    chart.x_labels = [row[0] for row in rows]
+    chart.add('Temps in F', [row[1] for row in rows])
+
+    return render_template('history.html', stat=stat, form=form, rows=rows, chart=chart)
 
 # Allows the POST requests to be made by the client device
 @app.route('/insertData', methods=["GET", "POST"])
@@ -75,7 +149,7 @@ def insertData():
     try:
         # Receive and parse the incoming JSON data
         packet = request.get_json(force=True)
-        deviceId = int(packet['device_id'])
+        device = int(packet['device_id'])
         temperature = float(packet['temperature'])
         humidity = float(packet['humidity'])
         pH = float(packet['pH'])
@@ -83,24 +157,41 @@ def insertData():
         battery = int(packet['battery'])
 
         # Create a sensor data row
-        sData = SensorData(device_id=deviceId, temperature=temperature, humidity=humidity, pH=pH, light_composition=light_comp, battery_level=battery)
+        sData = SensorData(device_id=device, temperature=temperature, humidity=humidity, pH=pH, light_composition=light_comp, battery_level=battery)
+        cData = None
 
-        # Create a color data row
-        red = int(packet['light_comp'][2:4], 16)
-        green = int(packet['light_comp'][4:6], 16)
-        blue = int(packet['light_comp'][6:8], 16)
-        cData = ColorData(device_id=deviceId, red=red, green=green, blue=blue, color_hex=packet['light_comp'])
+        print cData
+        c = ColorData.query.filter_by(device_id=device).all()
+        print c
+        print len(c)
+        
+        if len(c) == 0:
+            # Create a color data row
+            red = int(packet['light_comp'][2:4], 16)
+            green = int(packet['light_comp'][4:6], 16)
+            blue = int(packet['light_comp'][6:8], 16)
+            print red, green, blue
+            cData = ColorData(device_id=device, red=red, green=green, blue=blue, color_hex=light_comp)
+
     except:
         return "Invalid field in JSON\n", 403
-
     try:
         # Try to instert the added data
         insert(sData)
-        insert(cData)
+        if cData:
+            insert(cData)
     except:
-        return "Cannot put into db\n", 403
+        return "Cannot put into DB\n", 403
 
-    return "DB Insert Success\n", 201
+    color_row = ColorData.query.filter_by(device_id=device).order_by(ColorData.datetime.desc()).first()
+    return color_row.color_hex, 201
+
+
+
+#  ----- NON RENDERING PAGES ------ #
+#  either are used for administrative purposes or used by the device (greenhouse unit)
+
+
 
 # Allows the client device to inquire the latest color setting, either edited by the user or posted by the device
 @app.route('/getColor/<int:device_id>', methods=["GET"])
@@ -109,6 +200,43 @@ def getColor(device_id):
     if not color_row:
         return 'Device not found', 403
     else:
-        print 'DB Row:', color_row
-        print 'Color:', color_row.color_hex
-        return color_row.color_hex, 200
+        return color_row.color_hex, 201
+
+@app.route('/randomData/<int:device_id>', methods=["GET"])
+def randomData(device_id):
+    today = datetime.today()
+    weekAgo = today - timedelta(days=7)
+    timeInst = weekAgo
+    d = timedelta(minutes=15)
+    battery = 100
+    light_comp = "0x1A1A1A"
+
+    while timeInst < today:
+        if timeInst.hour > 9 and timeInst.hour < 17:
+            temperature = (random.randint(0, 40) + 40)
+            humidity = (random.randint(0, 30) + 35)
+            pH = (random.randint(0, 50) + 50) / 10
+            battery = 100 - 3 * random.random()
+        else:
+            temperature = (random.randint(0, 20) + 50)
+            humidity = (random.randint(0, 30) + 35)
+            pH = (random.randint(0, 50) + 50) / 10
+            battery = battery - 1.3 * random.random()
+        
+        sData = SensorData(device_id=device_id,
+                temperature=temperature,
+                humidity=humidity,
+                pH=pH,
+                light_composition=light_comp,
+                battery_level=int(battery),
+                datetime=timeInst
+        )
+
+        db.session.add(sData)
+        timeInst = timeInst + d
+    
+    db.session.commit()
+
+    responseStr = "Data created for device: " + str(device_id)
+    return responseStr, 201
+
