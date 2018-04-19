@@ -3,17 +3,29 @@
 {% block title %} Monitor Stats {% endblock %}
 
 {% block scripts %}
+<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+<script src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
 
 <script>
+
     function redUpdate(color) {
         document.querySelector('#selected-red').value = parseInt(color);
+        $('#bloom').removeClass("selected");
+        $('#veg').removeClass("selected");
     }
+
     function greenUpdate(color) {
         document.querySelector('#selected-green').value = parseInt(color);
+        $('#bloom').removeClass("selected");
+        $('#veg').removeClass("selected");
     }
+
     function blueUpdate(color) {
         document.querySelector('#selected-blue').value = parseInt(color);
+        $('#bloom').removeClass("selected");
+        $('#veg').removeClass("selected");
     }
+
     function combineColor() {
         redStr = document.getElementById('selected-red').value.toString();
         greenStr = document.getElementById('selected-green').value.toString();
@@ -23,6 +35,43 @@
         document.querySelector('#selected-hex').value = finalColor;
         document.querySelector('#selected-color').style.backgroundColor = finalColor;
     }
+
+    function selectBloom() {
+        console.log("Bloom Selected");
+        $('#bloom').addClass("selected");
+        $('#veg').removeClass("selected");
+
+        $('#rs').val(150);
+        $('#gs').val(15);
+        $('#bs').val(240);
+
+        document.querySelector('#selected-red').value = 150;
+        document.querySelector('#selected-green').value = 15;
+        document.querySelector('#selected-blue').value = 240;
+
+        finalColor = 'rgb(' + 150 + ', ' + 15 + ', ' + 240 + ')';
+        document.querySelector('#selected-hex').value = finalColor;
+        document.querySelector('#selected-color').style.backgroundColor = finalColor;
+    }
+
+    function selectVeg() {
+        console.log("Veg Selected");
+        $('#bloom').removeClass("selected");
+        $('#veg').addClass("selected");
+
+        $('#rs').val(230);
+        $('#gs').val(15);
+        $('#bs').val(140);
+
+        document.querySelector('#selected-red').value = 230;
+        document.querySelector('#selected-green').value = 15;
+        document.querySelector('#selected-blue').value = 140;
+
+        finalColor = 'rgb(' + 230 + ', ' + 15 + ', ' + 140 + ')';
+        document.querySelector('#selected-hex').value = finalColor;
+        document.querySelector('#selected-color').style.backgroundColor = finalColor;
+    }
+
 </script>
 
 {%- endblock %}
@@ -88,7 +137,7 @@
                     </tr>
                     <tr>
                         <td> <strong>Last Updated:</strong> </td>
-                        <td> {{ row.datetime }} </td>
+                        <td> {{ row.datetime.strftime('%H:%M:%S - %b %d, %Y') }} </td>
                     </tr>
                 </table>
 
@@ -106,15 +155,15 @@
                 <div class="col-md-10" id="color_selector">
                     <form name="color" method="POST" action="{{ url_for('current') }}" oninput="combineColor()" onload="combineColor()">
                             {{ color_form.red.label }}:
-                            {{ color_form.red(min=0, max=255, value=color_form.red.default, onload="redUpdate(value)", oninput="redUpdate(value)") }}
+                            {{ color_form.red(id="rs", min=0, max=255, value=color_form.red.default, onload="redUpdate(value)", oninput="redUpdate(value)") }}
                             <output for="red" id="selected-red"> {{ color_form.red.default }} </output><br>
 
                             {{ color_form.green.label }}:
-                            {{ color_form.green(min=0, max=255, value=color_form.green.default, oninput="greenUpdate(value)") }}
+                            {{ color_form.green(id="gs", min=0, max=255, value=color_form.green.default, oninput="greenUpdate(value)") }}
                             <output for="green" id="selected-green"> {{ color_form.green.default }} </output><br>
 
                             {{ color_form.blue.label }}:
-                            {{ color_form.blue(min=0, max=255, value=color_form.blue.default, oninput="blueUpdate(value)") }}
+                            {{ color_form.blue(id="bs", min=0, max=255, value=color_form.blue.default, oninput="blueUpdate(value)") }}
                             <output for="blue" id="selected-blue"> {{ color_form.blue.default }} </output><br><br>
 
                             {{ color_form.device(value=row.device_id)}}
@@ -126,7 +175,20 @@
 
                     <div class="row" id="selected-color" style="background-color: {{ color_form.color_hex.default }};">
                         <output for="hex" id="selected-hex"> </output>
-                    </div><br>
+                    </div>
+
+                    <div class="row">
+                        <h5> Color modes </h5>
+                        <div class="row">
+                            <div class="col-md-6" id="bloom" onclick="selectBloom()"> 
+                                <br><span><strong> Bloom Mode </strong></span>
+                            </div>
+                            
+                            <div class="col-md-6" id="veg" onclick="selectVeg()"> 
+                                <br><span><strong> Vegetative Mode </strong></span>
+                            </div>
+                        </div>
+                    </div>
  
                 </div>
                 <div class="col-md-1">

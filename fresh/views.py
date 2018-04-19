@@ -127,7 +127,14 @@ def history():
     statRanges = {'temperature':(32, 100), 
                   'humidity':(0, 100), 
                   'pH':(0, 14), 
-                  'battery_level':(0, 105), }
+                  'battery_level':(0, 105),
+                  'lux':(0, 10000) }
+
+    statTitles = {'temperature': "Water Temperature (C)", 
+                  'humidity': "Humidity (%)", 
+                  'pH': "pH", 
+                  'battery_level': "Battery Level (%)",
+                  'lux': "Lux (lum / m^2) "}
 
     # Create the chart
     title = '%s for device %s' % (stat, device)
@@ -137,7 +144,7 @@ def history():
                           show_dots=False,
                           disable_xml_declaration=True)
     chart.x_labels = [row[0] for row in rows]
-    chart.add('Temps in F', [row[1] for row in rows])
+    chart.add(statTitles[stat], [row[1] for row in rows])
 
     return render_template('history.html', stat=stat, form=form, rows=rows, chart=chart)
 
@@ -159,14 +166,17 @@ def insertData():
         greenData= int(packet['green'], 16)
         blueData = int(packet['blue'], 16)
 
-        redLux = (redData / 100) * 260
-        greenLux = (greenData / 100) * 679
-        blueLux = (blueData / 100) * 94
+        print "Data received"
+        redLux = (redData / 100.0) * 260
+        greenLux = (greenData / 100.0) * 679
+        blueLux = (blueData / 100.0) * 94
 
+        print "Converted to lux"
         maxLux = max([redLux, greenLux, blueLux])
         totalLux = redLux + greenLux + blueLux
 
-        print "Total Lux:", totalLux
+        print "TMax:", maxLux
+        print redLux, greenLux, blueLux
 
         redHex = hex(int((redLux / maxLux) * 255))[2:]
         greenHex = hex(int((greenLux / maxLux) * 255))[2:]
@@ -181,7 +191,9 @@ def insertData():
         if len(blueHex) < 2:
             blueHex = '0' + blueHex
 
-        light_comp = '0x' + redHex + greenHex + blueHex
+        print "Generated the hex", redHex, greenHex, blueHex
+
+        light_comp = '0x' + redHex.upper() + greenHex.upper() + blueHex.upper()
 
         # Create a sensor data row
         sData = SensorData(device_id=device, temperature=temperature, humidity=humidity, pH=pH, light_composition=light_comp, lux=totalLux, battery_level=battery)

@@ -43,7 +43,7 @@
                 <td> {{ row.light_composition}}</td>
                 <td> {{ row.lux }} </td>
                 <td> {{ row.battery_level }}</td>
-                <td> {{ row.datetime }}</td>
+                <td> {{ row.datetime.strftime('%H:%M:%S - %b %d, %Y') }}</td>
               </tr>
             {% endfor %}
           </tbody>

@@ -56,3 +56,41 @@ nav.navbar {
   border-width: 5px;
   color: white;
 }
+
+#bloom {
+  height: 65px;
+  background-color: rgb(150, 15, 240);
+  border-radius: 10px;
+  border-top-right-radius: 0px;
+  border-bottom-right-radius: 0px;
+  color: rgb(150, 15, 240);
+}
+
+#bloom:hover {
+  color: white;
+}
+
+#veg {
+  height: 65px;
+  background-color: rgb(230, 15, 140);
+  border-radius: 10px;
+  border-top-left-radius: 0px;
+  border-bottom-left-radius: 0px;
+  color: rgb(230, 15, 140);
+}
+
+#veg:hover {
+  color: white;
+}
+
+span {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.selected {
+  color: white;
+  border-style: solid;
+  border-color: black;
+  border-width: 2px;
+}

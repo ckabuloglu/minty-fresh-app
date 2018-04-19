@@ -41,7 +41,7 @@
                 <td> {{ row.blue }}</td>
                 <td> {{ row.color_hex }}</td>
                 <td> {{ row.by_user }}</td>
-                <td> {{ row.datetime }}</td>
+                <td> {{ row.datetime.strftime('%H:%M:%S - %b %d, %Y') }}</td>
               </tr>
             {% endfor %}
           </tbody>
