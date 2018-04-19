@@ -14,7 +14,8 @@ class ChooseStatForm(FlaskForm):
     stat_type = SelectField('stat_type', choices=[('temperature', 'Temperature'),
             ('humidity', 'Humidity'),
             ('pH', 'pH'),
-            ('battery_level', 'Battery Level')])
+            ('battery_level', 'Battery Level'),
+            ('lux', 'Lux')])
 
 class ChooseColorForm(FlaskForm):
     red = DecimalRangeField('Red', default=0)

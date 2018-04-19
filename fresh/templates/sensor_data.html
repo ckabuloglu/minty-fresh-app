@@ -23,12 +23,13 @@
             <tr>
               <th>Signal ID</th>
               <th>Device ID</th>
-              <th>Temperature</th>
-              <th>Humidity</th>
-              <th>pH Level</th>
+              <th>Water Temperature (C) </th>
+              <th>Humidity (%) </th>
+              <th>pH Level (pH) </th>
               <th>Light Composition</th>
-              <th>Battery Level</th>
-              <th>Time</th>
+              <th>Lux (lum/m^2) </th>
+              <th>Battery Level (%) </th>
+              <th>DateTime</th>
             </tr>
           </thead>
           <tbody>
@@ -40,6 +41,7 @@
                 <td> {{ row.humidity }}</td>
                 <td> {{ row.pH }}</td>
                 <td> {{ row.light_composition}}</td>
+                <td> {{ row.lux }} </td>
                 <td> {{ row.battery_level }}</td>
                 <td> {{ row.datetime }}</td>
               </tr>

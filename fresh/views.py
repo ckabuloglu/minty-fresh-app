@@ -65,7 +65,7 @@ def current():
 
     # If no data or whatsoever is present, initiate by adding 1 row to each table with dummy variable
     elif len(SensorData.query.all()) == 0:
-        sData = SensorData(device_id=1, temperature=78, humidity=50, pH=7, light_composition="0xFF00FF", battery_level=100)
+        sData = SensorData(device_id=1, temperature=78, humidity=50, pH=7, light_composition="0xFF00FF", lux=2500, battery_level=100)
         cData = ColorData(device_id=1, red=255, green=0, blue=255, color_hex="0xFF00FF", by_user=True)
         insert(sData)
         insert(cData)
@@ -159,16 +159,18 @@ def insertData():
         greenData= int(packet['green'], 16)
         blueData = int(packet['blue'], 16)
 
-        redLum = (redData * 10**12) * 260
-        greenLum = (greenData * 10**12) * 679
-        blueLum = (blueData * 10**12) * 94
+        redLux = (redData / 100) * 260
+        greenLux = (greenData / 100) * 679
+        blueLux = (blueData / 100) * 94
 
-        maxLum = max([redLum, greenLum, blueLum])
-        totalLum = redLum + greenLum + blueLum
+        maxLux = max([redLux, greenLux, blueLux])
+        totalLux = redLux + greenLux + blueLux
 
-        redHex = hex(int((redLum / maxLum) * 255))[2:]
-        greenHex = hex(int((greenLum / maxLum) * 255))[2:]
-        blueHex = hex(int((blueLum / maxLum) * 255))[2:]
+        print "Total Lux:", totalLux
+
+        redHex = hex(int((redLux / maxLux) * 255))[2:]
+        greenHex = hex(int((greenLux / maxLux) * 255))[2:]
+        blueHex = hex(int((blueLux / maxLux) * 255))[2:]
 
         if len(redHex) < 2:
             redHex = '0' + redHex
@@ -182,8 +184,7 @@ def insertData():
         light_comp = '0x' + redHex + greenHex + blueHex
 
         # Create a sensor data row
-        print 1
-        sData = SensorData(device_id=device, temperature=temperature, humidity=humidity, pH=pH, light_composition=light_comp, battery_level=battery)
+        sData = SensorData(device_id=device, temperature=temperature, humidity=humidity, pH=pH, light_composition=light_comp, lux=totalLux, battery_level=battery)
         cData = None
 
         print cData
@@ -193,9 +194,9 @@ def insertData():
         
         if len(c) == 0:
             # Create a color data row
-            red = int(packet['light_comp'][2:4], 16)
-            green = int(packet['light_comp'][4:6], 16)
-            blue = int(packet['light_comp'][6:8], 16)
+            red = int(redHex, 16)
+            green = int(greenHex, 16)
+            blue = int(blueHex, 16)
             print red, green, blue
             cData = ColorData(device_id=device, red=red, green=green, blue=blue, color_hex=light_comp)
 

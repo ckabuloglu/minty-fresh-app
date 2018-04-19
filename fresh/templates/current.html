@@ -58,28 +58,32 @@
                 <table class="table table-striped">
                     <thead>
                         <tr>
-                            <td> <strong>Device ID:</strong> </td>
+                            <td> <strong>Device ID: </strong> </td>
                             <td> {{ row.device_id }} </td>
                         </tr>
                     </thead>
                     <tr>
-                        <td> <strong>Temperature:</strong> </td>
+                        <td> <strong>Temperature (C): </strong> </td>
                         <td> {{ row.temperature }} </td>
                     </tr>
                     <tr>
-                        <td> <strong>Humidity:</strong> </td>
+                        <td> <strong>Humidity (%): </strong> </td>
                         <td> {{ row.humidity }} </td>
                     </tr>
                     <tr>
-                        <td> <strong>pH:</strong> </td>
+                        <td> <strong>pH: </strong> </td>
                         <td> {{ row.pH }} </td>
                     </tr>
                     <tr>
-                        <td> <strong>Light Color:</strong> </td>
+                        <td> <strong>LED Color: </strong> </td>
                         <td> {{ "0x" + color_form.color_hex.default[1:] }} </td>
                     </tr>
                     <tr>
-                        <td> <strong>Battery Level:</strong> </td>
+                        <td> <strong>Lux (lum/m^2): </strong> </td>
+                        <td> {{ row.lux }} </td>
+                    </tr>
+                    <tr>
+                        <td> <strong>Battery Level (%):</strong> </td>
                         <td> {{ row.battery_level }} </td>
                     </tr>
                     <tr>

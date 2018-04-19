@@ -10,6 +10,7 @@ class SensorData(Base):
     temperature = Column(Float, default=None)
     humidity = Column(Float, default=None)
     light_composition = Column(String, default=None)
+    lux = Column(Integer, default=None)
     pH = Column(Float, default=None)
     battery_level = Column(Integer, default=None)
     datetime = Column(DateTime(timezone=True), nullable=False, default=func.now())
