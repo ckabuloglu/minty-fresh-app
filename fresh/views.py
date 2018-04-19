@@ -153,10 +153,36 @@ def insertData():
         temperature = float(packet['temperature'])
         humidity = float(packet['humidity'])
         pH = float(packet['pH'])
-        light_comp = str(packet['light_comp'])
-        battery = int(packet['battery'])
+        battery = 97
+
+        redData = int(packet['red'], 16)
+        greenData= int(packet['green'], 16)
+        blueData = int(packet['blue'], 16)
+
+        redLum = (redData * 10**12) * 260
+        greenLum = (greenData * 10**12) * 679
+        blueLum = (blueData * 10**12) * 94
+
+        maxLum = max([redLum, greenLum, blueLum])
+        totalLum = redLum + greenLum + blueLum
+
+        redHex = hex(int((redLum / maxLum) * 255))[2:]
+        greenHex = hex(int((greenLum / maxLum) * 255))[2:]
+        blueHex = hex(int((blueLum / maxLum) * 255))[2:]
+
+        if len(redHex) < 2:
+            redHex = '0' + redHex
+
+        if len(greenHex) < 2:
+            greenHex = '0' + greenHex
+
+        if len(blueHex) < 2:
+            blueHex = '0' + blueHex
+
+        light_comp = '0x' + redHex + greenHex + blueHex
 
         # Create a sensor data row
+        print 1
         sData = SensorData(device_id=device, temperature=temperature, humidity=humidity, pH=pH, light_composition=light_comp, battery_level=battery)
         cData = None
 
