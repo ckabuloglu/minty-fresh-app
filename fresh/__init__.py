@@ -27,7 +27,7 @@ topbar = Navbar(
     'Minty Fresh',
     View('Current', 'current'),
     View('History', 'history'),
-    View('Signal Data', 'showSensor'),
+    View('Sensor Data', 'showSensor'),
     View('Color Data', 'showColor'),
 )
 

@@ -9,7 +9,7 @@ from sqlalchemy.orm import load_only
 
 from . import app, db
 from .models import ColorData, SensorData
-from .helpers import insert, getDeviceIds
+from .helpers import insert, getBatteryLevel, getDeviceIds
 from forms.data_forms import ChooseDeviceForm, ChooseColorForm, ChooseStatForm
 from forms.login_forms import ForgotForm, LoginForm
 
@@ -160,7 +160,7 @@ def insertData():
         temperature = float(packet['temperature'])
         humidity = float(packet['humidity'])
         pH = float(packet['pH'])
-        battery = 97
+        battery = getBatteryLevel(datetime.now())
 
         redData = int(packet['red'], 16)
         greenData= int(packet['green'], 16)
@@ -278,4 +278,11 @@ def randomData(device_id):
 
     responseStr = "Data created for device: " + str(device_id)
     return responseStr, 201
+
+@app.route('/test', methods=["GET"])
+def test():
+    dt = datetime.now()
+    level = getBatteryLevel(dt)
+
+    return str(level), 201
 

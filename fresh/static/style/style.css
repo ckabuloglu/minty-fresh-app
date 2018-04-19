@@ -94,3 +94,12 @@ span {
   border-color: black;
   border-width: 2px;
 }
+
+.colorCircle {
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  border-style: solid;
+  border-color: black;
+  border-width: 1px;
+}

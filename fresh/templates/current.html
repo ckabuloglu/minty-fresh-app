@@ -112,31 +112,31 @@
                         </tr>
                     </thead>
                     <tr>
-                        <td> <strong>Temperature (C): </strong> </td>
+                        <td> <strong> Temperature (C): </strong> </td>
                         <td> {{ row.temperature }} </td>
                     </tr>
                     <tr>
-                        <td> <strong>Humidity (%): </strong> </td>
+                        <td> <strong> Humidity (%): </strong> </td>
                         <td> {{ row.humidity }} </td>
                     </tr>
                     <tr>
-                        <td> <strong>pH: </strong> </td>
+                        <td> <strong> pH: </strong> </td>
                         <td> {{ row.pH }} </td>
                     </tr>
                     <tr>
-                        <td> <strong>LED Color: </strong> </td>
-                        <td> {{ "0x" + color_form.color_hex.default[1:] }} </td>
+                        <td> <strong> LED Color: </strong> </td>
+                        <td> {{ "0x" + color_form.color_hex.default[1:] }} <div class="colorCircle" style="background-color:{{ color_form.color_hex.default }}; "></div></td>
                     </tr>
                     <tr>
-                        <td> <strong>Lux (lum/m^2): </strong> </td>
+                        <td> <strong> Lux (lum/m^2): </strong> </td>
                         <td> {{ row.lux }} </td>
                     </tr>
                     <tr>
-                        <td> <strong>Battery Level (%):</strong> </td>
+                        <td> <strong> Battery Level (%):</strong> </td>
                         <td> {{ row.battery_level }} </td>
                     </tr>
                     <tr>
-                        <td> <strong>Last Updated:</strong> </td>
+                        <td> <strong> Last Updated:</strong> </td>
                         <td> {{ row.datetime.strftime('%H:%M:%S - %b %d, %Y') }} </td>
                     </tr>
                 </table>
